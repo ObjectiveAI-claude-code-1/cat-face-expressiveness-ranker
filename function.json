@@ -1,0 +1,93 @@
+{
+  "type": "vector.function",
+  "output_length": {
+    "$starlark": "len(input)"
+  },
+  "input_split": {
+    "$starlark": "[[item] for item in input]"
+  },
+  "input_merge": {
+    "$starlark": "[item for sublist in input for item in sublist]"
+  },
+  "input_schema": {
+    "type": "array",
+    "description": "A collection of cat images to rank by the expressiveness of each cat's face. Each image should contain a cat whose face is visible.",
+    "minItems": 2,
+    "items": {
+      "type": "image",
+      "description": "A photograph of a cat with a visible face, to be evaluated for facial expressiveness across three dimensions: ocular intensity (eyes), auricular signal (ears), and oral and whisker drama (mouth and whiskers)."
+    }
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Show me a photograph of a cat whose eyes are alive with readable emotion. I want to see eyes that are clearly communicating an inner state — whether that's the enormous dilated pupils of excitement or overstimulation, the slow half-lidded droop of deep trust and relaxation, the hard unblinking stare of a cat locked onto prey, the soft affectionate squint, or the wide-open round-eyed look of surprise and bewilderment. Show me the cat whose eyes are doing the most — actively transmitting a feeling, not just passively sitting open and neutral in the cat's face."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[item] for item in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are an expert in feline body language, specializing in the communicative signals cats send through ear positioning. A cat's ears are semaphore flags: ears pricked tall and rotated forward signal curiosity or keen alertness; ears rotated sideways into the airplane position broadcast irritation, unease, or anxiety; ears pinned fully flat against the skull signal fear, defensive aggression, or deep distress; and asymmetric positions — one ear forward, one to the side — suggest ambivalence or divided attention. When asked to show a cat photo, you always select the one where the ears have most decisively committed to a posture that communicates mood."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Show me the cat whose ears are sending the strongest, most unmistakable emotional signal. I want ears that have clearly moved in response to something the cat is feeling — decisively committed to a communicative posture, not resting in the relaxed upright default that says nothing."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[item] for item in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "I collect photographs of cats caught in moments of peak facial drama — the theatrical mid-yawn with jaws flung wide and tongue curled, the open-mouthed oval of a mid-meow, the lip-curled snarl of a hiss, whiskers fanned forward and bristling with intense engagement, or whiskers pulled back flat against the cheeks in fear. Show me the cat whose mouth and whiskers are adding the most visible theatrical energy to its expression. I'm not interested in a closed neutral mouth with whiskers in their relaxed default splay — I want the face where the mouth and whiskers are the exclamation point."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[item] for item in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    }
+  ],
+  "description": "Ranks cat images by facial expressiveness. Evaluates three dimensions: ocular intensity (eyes conveying emotion through pupils and gaze), auricular signal (ears in communicative postures), and oral/whisker drama (mouth and whiskers adding theatrical energy). Ranks high for faces transmitting readable feelings; low for neutral resting expressions."
+}
